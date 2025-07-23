@@ -1,17 +1,39 @@
 <?php
 header('Content-Type: application/json');
 
-$dbPath = __DIR__ . '/database.sqlite';
-$pdo = new PDO('sqlite:' . $dbPath);
+$uploadDir = __DIR__ . '/uploads/';
+$filesData = [];
 
-$pdo->exec("CREATE TABLE IF NOT EXISTS videos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT, video_id TEXT NOT NULL UNIQUE,
-    original_name TEXT NOT NULL, file_path TEXT NOT NULL,
-    uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP
-)");
+// Check if the uploads directory exists
+if (is_dir($uploadDir)) {
+    // Scan the directory for files
+    $files = scandir($uploadDir);
+    
+    foreach ($files as $file) {
+        // Ignore the '.' and '..' system files and any sub-directories
+        if ($file === '.' || $file === '..' || !is_file($uploadDir . $file)) {
+            continue;
+        }
 
-$stmt = $pdo->query("SELECT * FROM videos ORDER BY uploaded_at DESC");
-$videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Get file modification time as a timestamp (for sorting)
+        $uploadTimestamp = filemtime($uploadDir . $file);
+        
+        // Add file information to the array
+        $filesData[] = [
+            'video_id'      => pathinfo($file, PATHINFO_FILENAME), // e.g., 'file_635ac...'
+            'original_name' => htmlspecialchars($file), // Shows the unique filename
+            'file_path'     => 'uploads/' . rawurlencode($file),
+            'uploaded_at'   => date('Y-m-d H:i:s', $uploadTimestamp) // Format timestamp for display
+        ];
+    }
 
-echo json_encode($videos);
+    // Sort the files by upload date in descending order (newest first)
+    usort($filesData, function($a, $b) {
+        // We compare the original timestamps for accuracy
+        return filemtime(__DIR__ . '/' . $b['file_path']) <=> filemtime(__DIR__ . '/' . $a['file_path']);
+    });
+}
+
+// Output the list of files as JSON
+echo json_encode($filesData);
 ?>
