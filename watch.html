@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watching Video</title>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 id="videoTitle">Now Playing...</h1>
+        </header>
+        <main>
+            <video id="player" playsinline controls>
+                <!-- Source will be added by JavaScript -->
+            </video>
+            <a href="/" class="back-link">← Back to Library</a>
+        </main>
+    </div>
+
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const videoSrc = params.get('v');
+            const videoTitleEl = document.getElementById('videoTitle');
+            
+            if (videoSrc) {
+                const source = document.createElement('source');
+                source.src = decodeURIComponent(videoSrc);
+                
+                const playerEl = document.getElementById('player');
+                playerEl.appendChild(source);
+                
+                const player = new Plyr('#player');
+                
+                const videoName = decodeURIComponent(params.get('title') || 'Untitled File');
+                videoTitleEl.textContent = `${videoName}`;
+            } else {
+                videoTitleEl.textContent = 'Error: File not found.';
+            }
+        });
+    </script>
+</body>
+</html>
