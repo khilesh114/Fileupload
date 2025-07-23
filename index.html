@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro File Uploader</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Pro File Uploader</h1>
+            <p>Upload any file. It will be securely stored and added to the library below.</p>
+        </header>
+
+        <main>
+            <div id="uploadBox" class="card">
+                <h2><i class="icon-upload"></i> Upload a New File</h2>
+                <input type="file" id="videoFile">
+                <label for="videoFile" class="file-label">
+                    <span id="fileName">Click to choose a file...</span>
+                </label>
+                <button id="uploadButton" disabled>Upload File</button>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <div id="status"></div>
+            </div>
+
+            <div id="videoLibrary" class="card">
+                <h2><i class="icon-library"></i> File Library</h2>
+                <div id="videoList">
+                    <!-- Files will be dynamically loaded here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
